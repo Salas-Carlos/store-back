@@ -14,6 +14,11 @@ import { WompiClient } from "./config/client";
             useFactory: (configService: ConfigService) => configService.get('WOMPI_API_URL'),
             inject: [ConfigService]
         },
+        {
+            provide: 'WOMPI_PUBLIC_KEY',
+            useFactory: (configService: ConfigService) => configService.get('WOMPI_PUBLIC_KEY'),
+            inject: [ConfigService]
+        },
         WompiApiService,
         WompiClient
     ],

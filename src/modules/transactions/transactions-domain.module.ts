@@ -1,24 +1,23 @@
 import { Module } from "@nestjs/common";
-import { ProductsController } from "src/adapters/in/http/products/products.controller";
-import { ProductsDBRepository } from "src/adapters/out/postgres/repositories/products.repository";
-import { GetAllProductsUseCase } from "src/domain/usecase/products/get-all-products.usecase";
 import { DriversModule } from "src/drivers.module";
-import { GetAllProductsHandler } from "src/handler/products/get-all-products.handler";
-import { ProductsRepository } from '../../model/products/procuts.repository';
 import { TransactionsController } from "src/adapters/in/http/transactions/transactions.controller";
 import { CreateTransactionHandler } from "src/handler/transactions/create-transactions.handler";
+import { CreateTransactionUseCase } from "src/domain/usecase/transactions/create-transactions.usecase";
+import { WompiRepository } from "src/model/wompi/wompi.repository";
+import { WompiApiService } from "src/adapters/out/http/wompi/repositories/wompi.service";
+import { WompiServiceModule } from "src/adapters/out/http/wompi/wompi.module";
 
 @Module({
-    imports: [DriversModule],
+    imports: [DriversModule, WompiServiceModule],
     controllers: [TransactionsController],
     providers: [CreateTransactionHandler,
-        /*  {
-             provide: GetAllProductsUseCase,
-             useFactory: (repository: ProductsRepository) => {
-                 return new GetAllProductsUseCase(repository);
-             },
-             inject: [ProductsDBRepository]
-         } */
+        {
+            provide: CreateTransactionUseCase,
+            useFactory: (repository: WompiRepository) => {
+                return new CreateTransactionUseCase(repository);
+            },
+            inject: [WompiApiService]
+        }
     ],
     exports: [CreateTransactionHandler]
 })

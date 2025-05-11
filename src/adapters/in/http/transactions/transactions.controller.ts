@@ -11,7 +11,6 @@ export class TransactionsController {
     async createTransaction(
         @Body() body: CreateTransactionDTO
     ): Promise<HTTPResponse> {
-        console.log(body)
         return this.createTransactionHandler.execute(body);
     }
 }

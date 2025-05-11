@@ -3,19 +3,22 @@ import { CreateTransactionDTO } from "src/adapters/in/http/transactions/dto/crea
 import { SUCCESS_MESSAGE } from "src/common/response-states/success-states.message";
 import { CreateTransactionUseCase } from "src/domain/usecase/transactions/create-transactions.usecase";
 import { HTTPResponse } from "src/models/http-response.model";
+import { CreateTransactionMapper } from "src/models/mappers/create-transaction.mapper";
 
 @Injectable()
 export class CreateTransactionHandler {
     constructor(
-        //  private readonly createTransactionUseCase: CreateTransactionUseCase
+        private readonly createTransactionUseCase: CreateTransactionUseCase
     ) {
 
     }
 
     async execute(body: CreateTransactionDTO): Promise<HTTPResponse> {
 
-        //const products = await this.createTransactionUseCase.execute();
+        const createTransactionCommand = CreateTransactionMapper.toCommand(body);
 
-        return new HTTPResponse(HttpStatus.OK, SUCCESS_MESSAGE.SUCCESS.code, SUCCESS_MESSAGE.SUCCESS.message, { products: [] });
+        const transactionCreated = await this.createTransactionUseCase.execute(createTransactionCommand);
+
+        return new HTTPResponse(HttpStatus.OK, SUCCESS_MESSAGE.SUCCESS.code, SUCCESS_MESSAGE.SUCCESS.message, { transactionCreated });
     }
 }
