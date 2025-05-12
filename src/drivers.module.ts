@@ -2,6 +2,8 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ProductsEntitySchema } from "./adapters/out/postgres/entity-schemas/products.entity-schema";
 import { ProductsDBRepository } from "./adapters/out/postgres/repositories/products.repository";
+import { TransactionsDBRepository } from "./adapters/out/postgres/repositories/transactions.repository";
+import { TransactionsEntitySchema } from "./adapters/out/postgres/entity-schemas/transaction.entity-schema";
 
 
 @Module({
@@ -13,11 +15,11 @@ import { ProductsDBRepository } from "./adapters/out/postgres/repositories/produ
             username: 'postgres',
             password: '12345',
             database: 'store',
-            entities: [ProductsEntitySchema],
+            entities: [ProductsEntitySchema, TransactionsEntitySchema],
             synchronize: true
         }),
-        TypeOrmModule.forFeature([ProductsEntitySchema])],
-    providers: [ProductsDBRepository],
-    exports: [ProductsDBRepository]
+        TypeOrmModule.forFeature([ProductsEntitySchema, TransactionsEntitySchema])],
+    providers: [ProductsDBRepository, TransactionsDBRepository],
+    exports: [ProductsDBRepository, TransactionsDBRepository]
 })
 export class DriversModule { }

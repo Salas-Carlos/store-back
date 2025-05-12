@@ -9,9 +9,7 @@ import { CreateTransactionMapper } from "src/models/mappers/create-transaction.m
 export class CreateTransactionHandler {
     constructor(
         private readonly createTransactionUseCase: CreateTransactionUseCase
-    ) {
-
-    }
+    ) { }
 
     async execute(body: CreateTransactionDTO): Promise<HTTPResponse> {
 

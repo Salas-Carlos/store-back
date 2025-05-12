@@ -4,7 +4,7 @@ import { ProductsDBRepository } from "src/adapters/out/postgres/repositories/pro
 import { GetAllProductsUseCase } from "src/domain/usecase/products/get-all-products.usecase";
 import { DriversModule } from "src/drivers.module";
 import { GetAllProductsHandler } from "src/handler/products/get-all-products.handler";
-import { ProductsRepository } from '../../model/products/procuts.repository';
+import { ProductsRepository } from '../../model/products/produts.repository';
 
 @Module({
     imports: [DriversModule],

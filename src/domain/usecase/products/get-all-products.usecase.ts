@@ -1,4 +1,4 @@
-import { ProductsRepository } from "src/model/products/procuts.repository";
+import { ProductsRepository } from "src/model/products/produts.repository";
 
 
 export class GetAllProductsUseCase {

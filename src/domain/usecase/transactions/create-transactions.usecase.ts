@@ -1,32 +1,60 @@
+import { HttpException, HttpStatus } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { generateHash } from "src/common/utils/create-hash.util";
-import { ProductsRepository } from "src/model/products/procuts.repository";
+import { ProductsRepository } from "src/model/products/produts.repository";
 import { CreateTransactionCommand } from "src/model/transactions/commands/create-transaction.command";
+import { ExecuteTransactionCommand } from "src/model/transactions/commands/execute-transaction.command";
+import { StatusTransactionEnum } from "src/model/transactions/enums/status-transaction.enum";
+import { TransactionsRepository } from "src/model/transactions/transactions.repository";
 import { WompiRepository } from "src/model/wompi/wompi.repository";
+
 
 
 export class CreateTransactionUseCase {
     constructor(
-        private readonly wompiService: WompiRepository
+        private readonly wompiService: WompiRepository,
+        private readonly configService: ConfigService,
+        private readonly transactionRepository: TransactionsRepository,
+        private readonly productRepository: ProductsRepository,
 
     ) { }
 
     async execute(body: CreateTransactionCommand) {
 
-        const tokenCard = await this.wompiService.getTokenCard({
-            number: body.numberCard,
-            cvc: body.cvc,
-            exp_month: body.expMonth,
-            exp_year: body.expYear,
-            card_holder: body.cardHolder
-        });
+        const product = await this.productRepository.getById(body.productId);
 
-        const acceptToken = await this.wompiService.getAcceptanceToken();
+        if (!product) {
+            throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+        }
 
-        const signature = await generateHash(`${body.reference}${body.totalValue}${body.currency}${process.env.WOMPI_SECRET_INTEGRITY}`);
-        console.log('signature: ', signature)
-        console.log('tokenCard: ', tokenCard)
-        console.log('acceptToken: ', acceptToken)
+        if (product.stock < body.quantity) {
+            throw new HttpException('Not enough product quantity', HttpStatus.BAD_REQUEST);
+        }
 
-        return {}
+        let transaction = await this.transactionRepository.save(body);
+
+        try {
+            const acceptToken = await this.wompiService.getAcceptanceToken();
+
+            const secretIntegrity = this.configService.get<string>('WOMPI_SECRET_INTEGRITY');
+
+            const signature = await generateHash(`${body.reference}${body.totalValue}${body.currency}${secretIntegrity}`);
+
+            const transactionData: ExecuteTransactionCommand = {
+                ...body,
+                tokenCard: body.cardToken,
+                acceptToken,
+                signature
+            }
+
+            const transactionWompi = await this.wompiService.createTransaction(transactionData)
+
+            transaction = await this.transactionRepository.update(transaction.id, { transactionId: transactionWompi.data.id });
+
+        } catch (error) {
+            console.log('Error creating transaction', error);
+            transaction = await this.transactionRepository.update(transaction.id, { status: StatusTransactionEnum.ERROR });
+        }
+        return transaction
     }
 }

@@ -1,11 +1,6 @@
 
 
 export type CreateTransactionCommand = {
-    numberCard: string;
-    cvc: string;
-    expMonth: string;
-    expYear: string;
-    cardHolder: string;
 
     quantity: number;
     productId: number;
@@ -13,5 +8,6 @@ export type CreateTransactionCommand = {
     currency: string;
     customerEmail: string;
     reference: string;
+    cardToken: string
 
 }
