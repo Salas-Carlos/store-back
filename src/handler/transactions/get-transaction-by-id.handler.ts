@@ -11,8 +11,8 @@ export class GetTransactionByIdHandler {
 
     async execute(id: number): Promise<HTTPResponse> {
 
-        const transactionCreated = await this.getTransactionByIdUseCase.execute(id);
+        const transaction = await this.getTransactionByIdUseCase.execute(id);
 
-        return new HTTPResponse(HttpStatus.OK, SUCCESS_MESSAGE.SUCCESS.code, SUCCESS_MESSAGE.SUCCESS.message, { transactionCreated });
+        return new HTTPResponse(HttpStatus.OK, SUCCESS_MESSAGE.SUCCESS.code, SUCCESS_MESSAGE.SUCCESS.message, transaction);
     }
 }

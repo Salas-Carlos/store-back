@@ -15,8 +15,8 @@ export class CreateTransactionHandler {
 
         const createTransactionCommand = CreateTransactionMapper.toCommand(body);
 
-        const transactionCreated = await this.createTransactionUseCase.execute(createTransactionCommand);
+        const transaction = await this.createTransactionUseCase.execute(createTransactionCommand);
 
-        return new HTTPResponse(HttpStatus.OK, SUCCESS_MESSAGE.SUCCESS.code, SUCCESS_MESSAGE.SUCCESS.message, { transactionCreated });
+        return new HTTPResponse(HttpStatus.OK, SUCCESS_MESSAGE.SUCCESS.code, SUCCESS_MESSAGE.SUCCESS.message, transaction);
     }
 }
