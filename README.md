@@ -41,14 +41,33 @@ Este proyecto es el back-end para la integración con la pasarela de pagos Wompi
 ## Rutas
 
 Las siguientes son las rutas disponibles en el proyecto:
-
 - **`POST /cards`**  
-  Crea el token de las tarjetas de credito.
-
+  Crea el token de las tarjetas de crédito.  
+  **Body**:  
+  ```json
+  {
+    "numberCard": "4242424242424242", // Número de la tarjeta
+    "cvc": "123", // Código de seguridad de la tarjeta (3 o 4 dígitos según corresponda)
+    "expMonth": "08", // Mes de expiración (string de 2 dígitos)
+    "expYear": "28", // Año de expiración (string de 2 dígitos)
+    "cardHolder": "José Pérez" // Nombre del tarjetahabiente
+  }
+  ```
+  
 - **`GET /products`**  
   Lista todos los productos disponibles en la DB para comprar.
 
 - **`POST /transaction`**  
+  **Body**:  
+```json
+{
+  "quantity": 2, // Cantidad de productos a comprar
+  "productId": 1, // ID del producto a comprar
+  "totalValue": 400000, // Valor total de la transacción
+  "customerEmail": "carlos@test.com", // Correo electrónico del cliente
+  "cardToken": "token" // Token de la tarjeta generado previamente
+}
+```
   Crea una transacción utilizando el token de la tarjeta y la información de cuanto se pagara
 
 - **`GET /transaction/:id`**  
